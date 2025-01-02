@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penilaian</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <style>
+        /* Make the entire card interactive */
+        #pilih_kelompok .card:hover {
+            cursor: pointer;
+            transform: scale(1.02); /* Optional: slight zoom effect */
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.7); /* Blue glow */
+        }
+        /* Blue shadow effect on click */
+        .selected_card {
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.7); /* Blue glow */
+            transform: scale(1.02); /* Slight zoom effect */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Penilaian</h1>
+
+        <div>
+            <div class="card mb-6">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            NIM Penilai
+                        </div>
+                        <div class="col-1">
+                            :
+                        </div>
+                        <div class="col-3">
+                            <input type="text" name="nim" id="nim_penilai" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-6">
+                <div class="card-body">
+                    <div class="row" style="margin-bottom: 6px;">
+                        <div class="col-md-4">
+                            Angkatan
+                        </div>
+                        <div class="col-6">
+                            <!-- Button Group for Toggle -->
+                            <div class="btn-group" role="group" aria-label="Angkatan selection">
+                                <input type="radio" class="btn-check" name="angkatan" id="angkatan-2023" autocomplete="off" value="2023" onchange="filterByAngkatan(this.value)">
+                                <label class="btn btn-outline-primary" for="angkatan-2023">2023</label>
+                                
+                                <input type="radio" class="btn-check" name="angkatan" id="angkatan-2024" autocomplete="off" value="2024" checked onchange="filterByAngkatan(this.value)">
+                                <label class="btn btn-outline-primary" for="angkatan-2024">2024</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row" style="margin-bottom: 6px;">
+                        <div class="col-md-4">
+                            Kelas
+                        </div>
+                        <div class="col-6">
+                            <!-- Button Group for Toggle -->
+                            <div class="btn-group" role="group" aria-label="Kelas selection">
+                                <input type="radio" class="btn-check" name="kelas" id="kelas-c1" autocomplete="off" value="C1" checked onchange="filterByKelas(this.value)">
+                                <label class="btn btn-outline-primary" for="kelas-c1">C1</label>
+                                
+                                <input type="radio" class="btn-check" name="kelas" id="kelas-c2" autocomplete="off" value="C2" onchange="filterByKelas(this.value)">
+                                <label class="btn btn-outline-primary" for="kelas-c2">C2</label>
+                            </div>
+                        </div>
+                    </div>                    
+            
+                    <div class="row" id="pilih_kelompok">
+                        <div class="col-12" style="margin-bottom: 12px;">
+                            Pilih Kelompok
+                        </div>
+
+                        <div class="col-12">
+                            <div class="row" id="pilih_kelompok_card"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="card mb-6">
+                        <div class="card-body">
+                            
+                            <div class="row" class="" id="anggota_kelompok">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-6">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" onclick="onSubmitPenilaianPerorangan()" id="SubmitPenilaianPerorangan" disabled>
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="card mb-6">
+                        <div class="card-body">
+                            <table class="table table-bordered table-striped" id="nilai_kelompok">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Indikator</th>
+                                        <th>Kriteria</th>
+                                        <th>Bobot</th>
+                                        <th width="100">Nilai</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Ide*</td>
+                                        <td>
+                                            <ul>
+                                                <li>Memiliki unique point</li>
+                                                <li>Tingkat Kompleksitas desain</li>
+                                                <li>Kesesuaian dengan tema</li>
+                                            </ul>
+                                        </td>
+                                        <td>10%</td>
+                                        <td>
+                                            <input type="number" name="ide" min="0" max="100" placeholder="0-100" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Visual*</td>
+                                        <td>
+                                            <ul>
+                                                <li>Tingkat kemudahan keterbacaan desain jaringan</li>
+                                                <li>Adanya keterangan yang jelas dan rinci yang dapat menjelaskan bagian-bagian pada desain.</li>
+                                            </ul>
+                                        </td>
+                                        <td>10%</td>
+                                        <td>
+                                            <input type="number" name="visual" min="0" max="100" placeholder="0-100" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Konfigurasi IP address*</td>
+                                        <td>
+                                            <ul>
+                                                <li>Pembagian jaringan sesuai dengan kebutuhan.</li>
+                                                <li>Subnetting/Supernetting sesuai dengan kebutuhan.</li>
+                                            </ul>
+                                        </td>
+                                        <td>15%</td>
+                                        <td>
+                                            <input type="number" name="konfigurasi_ip_address" min="0" max="100" placeholder="0-100" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>Desain Router*</td>
+                                        <td>
+                                            <ul>
+                                                <li>Banyaknya router sesuai dengan kebutuhan.</li>
+                                                <li>Memiliki backup route minimal 1 untuk mitigasi gangguan jaringan.</li>
+                                                <li>Menggunakan metode routing sesuai dengan kebutuhan dengan mempertimbangkan efektivitas dan efisiensi terhadap keberjalanan UMKM.</li>
+                                            </ul>
+                                        </td>
+                                        <td>15%</td>
+                                        <td>
+                                            <input type="number" name="desain_router" min="0" max="100" placeholder="0-100" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>Konfigurasi VLAN</td>
+                                        <td>
+                                            <ul>
+                                                <li>Membagi jaringan dengan VLAN untuk membatasi komunikasi sesuai dengan kebutuhan.</li>
+                                                <li>Menggunakan intervlan apabila dibutuhkan.</li>
+                                            </ul>
+                                        </td>
+                                        <td>15%</td>
+                                        <td>
+                                            <input type="number" name="konfigurasi_vlan" min="0" max="100" placeholder="0-100" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td>Keamanan*</td>
+                                        <td>
+                                            <ul>
+                                                <li>Menerapkan ACL sesuai dengan kebutuhan, utamanya pada jaringan wire.</li>
+                                                <li>Menerapkan authentication pada jaringan sesuai dengan kebutuhan, utamanya pada jaringan wireless.</li>
+                                            </ul>
+                                        </td>
+                                        <td>15%</td>
+                                        <td>
+                                            <input type="number" name="keamanan" min="0" max="100" placeholder="0-100" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td>Kesesuaian kebutuhan kabel dan perangkat*</td>
+                                        <td>
+                                            <ul>
+                                                <li>Menggunakan kabel yang sesuai dengan kebutuhan yang mempertimbangkan efisiensi anggaran UMKM.</li>
+                                                <li>Menggunakan perangkat yang dibutuhkan oleh UMKM. Perangkat dapat direpresentasikan.</li>
+                                            </ul>
+                                        </td>
+                                        <td>10%</td>
+                                        <td>
+                                            <input type="number" name="kesesuaian_kebutuhan_kabel_dan_perangkat" min="0" max="100" placeholder="0-100" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td>Server</td>
+                                        <td>
+                                            <ul>
+                                                <li>Menggunakan server sebagai layanan penyedia IP, web, ataupun IoT.</li>
+                                            </ul>
+                                        </td>
+                                        <td>5%</td>
+                                        <td>
+                                            <input type="number" name="server" min="0" max="100" placeholder="0-100" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>9</td>
+                                        <td>Internet of Things</td>
+                                        <td>
+                                            <ul>
+                                                <li>IoT digunakan untuk menghubungkan suatu object dengan jaringan.</li>
+                                            </ul>
+                                        </td>
+                                        <td>5%</td>
+                                        <td>
+                                            <input type="number" name="internet_of_things" min="0" max="100" placeholder="0-100" class="form-control form-control-sm">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>10</td>
+                                        <td>Total</td>
+                                        <td colspan="2"></td>
+                                        <td id="total_value">0</td> <!-- This will display the calculated total value -->
+                                    </tr>
+                                </tbody>
+                            </table>                            
+                        </div>
+                    </div>
+        
+                    <div class="card mb-6">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" onclick="submitPenilaianKelompok()" disabled id="submitPenilaianKelompok">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- JavaScript -->
+    <script>
+        function selectCard(card) {
+            // Remove 'selected' class from all cards
+            const allCards = document.querySelectorAll('.card');
+            allCards.forEach(c => c.classList.remove('selected_card'));
+
+            // Add 'selected' class to the clicked card
+            card.classList.add('selected_card');
+
+        }
+
+        // Store the input values grouped by group number
+        let studentInputValues = {
+            "2023": {
+                "C1": {},
+                "C2": {}
+            },
+            "2024": {
+                "C1": {},
+                "C2": {}
+            },
+        }; // Keyed by group number and then by student ID
+        let studentGroupNumberSelected = null;
+        let changedStudentData = {
+            "2023": {
+                "C1": {},
+                "C2": {}
+            },
+            "2024": {
+                "C1": {},
+                "C2": {}
+            },
+        };
+
+        // Function to handle card selection (group selection)
+        function selectKelompok(group, card) {
+            selectCard(card);
+            
+            studentGroupNumberSelected = null;
+
+            // Find the container where we will display student details
+            const detailContainer = document.getElementById('anggota_kelompok');
+            detailContainer.innerHTML = 'Loading...'; // Show loading text
+
+            // Create the container for the student detail cards
+            const studentDetailCardContainer = document.createElement('div');
+            studentDetailCardContainer.classList.add('row'); // Add a row class if needed
+
+            // Store the group number to persist data under this group
+            const groupNumber = group.group_number;
+
+            group.students.forEach(student => {
+                // Create the student card dynamically
+                const studentCard = document.createElement('div');
+                studentCard.classList.add('col-md-6');
+                studentCard.style.marginBottom = '6px';
+
+                // Build the structure for the student detail card
+                studentCard.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row" style="margin-bottom: 6px;">
+                                <div class="col-6">
+                                    Nama
+                                </div>
+                                <div class="col-1">
+                                    :
+                                </div>
+                                <div class="col-5">
+                                    ${student.student_name}
+                                </div>
+                            </div>
+                            
+                            <div class="row" style="margin-bottom: 6px;">
+                                <div class="col-6">
+                                    Presentasi
+                                </div>
+                                <div class="col-1">:</div>
+                                <div class="col-3">
+                                    <input type="number" name="presentasi-${student.student_id}" min="0" max="100" placeholder="0-100" class="form-control form-control-sm" data-student-id="${student.student_id}" data-group-number="${groupNumber}" value="${getInputValue(groupNumber, student.student_id, 'presentasi')}">
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin-bottom: 6px;">
+                                <div class="col-6">
+                                    Tanjaw
+                                </div>
+                                <div class="col-1">:</div>
+                                <div class="col-3">
+                                    <input type="number" name="tanjaw-${student.student_id}" min="0" max="100" placeholder="0-100" class="form-control form-control-sm" data-student-id="${student.student_id}" data-group-number="${groupNumber}" value="${getInputValue(groupNumber, student.student_id, 'tanjaw')}">
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin-bottom: 6px;">
+                                <div class="col-6">
+                                    Total
+                                </div>
+                                <div class="col-1">:</div>
+                                <div class="col-3">
+                                    <input type="number" name="total-${student.student_id}" min="0" max="100" placeholder="0-100" class="form-control form-control-sm" disabled value="${getInputValue(groupNumber, student.student_id, 'total')}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add the student card to the container
+                studentDetailCardContainer.appendChild(studentCard);
+            });
+
+            // Clear loading text and append the student cards to the container
+            detailContainer.innerHTML = '';
+            detailContainer.appendChild(studentDetailCardContainer);
+
+            // Bind the inputs with the student data
+            bindInputValues(groupNumber);
+            studentGroupNumberSelected = groupNumber;
+
+            const submitButton = document.getElementById("SubmitPenilaianPerorangan");
+            submitButton.disabled = !changedStudentData[angkatanSelected][kelasSelected][studentGroupNumberSelected];
+            console.log(changedStudentData[angkatanSelected][kelasSelected][studentGroupNumberSelected]);
+        }
+
+        // Function to get the input value from studentInputValues[angkatanSelected][kelasSelected] for group and student
+        function getInputValue(groupNumber, studentId, field) {
+            return studentInputValues[angkatanSelected][kelasSelected][groupNumber]?.[studentId]?.[field] || '';
+        }
+
+        // Function to bind input values to student data
+        function bindInputValues(groupNumber) {
+            const inputs = document.querySelectorAll('.form-control-sm');
+
+            inputs.forEach(input => {
+                const studentId = input.getAttribute('data-student-id');
+                
+                // Handle changes to Presentasi and Tanjaw fields
+                if (input.name.includes('presentasi')) {
+                    input.addEventListener('input', () => {
+                        // Initialize student data for this group if not already
+                        studentInputValues[angkatanSelected][kelasSelected][groupNumber] = studentInputValues[angkatanSelected][kelasSelected][groupNumber] || {};
+                        studentInputValues[angkatanSelected][kelasSelected][groupNumber][studentId] = studentInputValues[angkatanSelected][kelasSelected][groupNumber][studentId] || {};
+                        studentInputValues[angkatanSelected][kelasSelected][groupNumber][studentId].presentasi = input.value;
+                        updateTotal(groupNumber, studentId); // Recalculate total after Presentasi changes
+                    });
+
+                } else if (input.name.includes('tanjaw')) {
+                    input.addEventListener('input', () => {
+                        // Initialize student data for this groupNumber if not already
+                        studentInputValues[angkatanSelected][kelasSelected][groupNumber] = studentInputValues[angkatanSelected][kelasSelected][groupNumber] || {};
+                        studentInputValues[angkatanSelected][kelasSelected][groupNumber][studentId] = studentInputValues[angkatanSelected][kelasSelected][groupNumber][studentId] || {};
+                        studentInputValues[angkatanSelected][kelasSelected][groupNumber][studentId].tanjaw = input.value;
+                        updateTotal(groupNumber, studentId); // Recalculate total after Tanjaw changes
+                    });
+                }
+            });
+        }
+
+        // Function to update the total for each student in a specific group
+        function updateTotal(groupNumber, studentId) {
+            const student = studentInputValues[angkatanSelected][kelasSelected][groupNumber]?.[studentId];
+            if (student) {
+                const presentasi = parseFloat(student.presentasi || 0) * 70 / 100;
+                const tanjaw = parseFloat(student.tanjaw || 0) * 70 / 100;
+                const total = presentasi + tanjaw;
+
+                // Update the total input field for that student
+                const totalInput = document.querySelector(`input[name="total-${studentId}"]`);
+                totalInput.value = total;
+
+                // Update the total in the studentInputValues[angkatanSelected][kelasSelected] object as well
+                studentInputValues[angkatanSelected][kelasSelected][groupNumber][studentId].total = total;
+
+
+                changedStudentData[angkatanSelected][kelasSelected][studentGroupNumberSelected] = true;
+                const submitButton = document.getElementById("SubmitPenilaianPerorangan");
+                submitButton.disabled = false;
+            }
+        }
+    </script>
+
+    <script>
+        let masterData = {};
+
+        function displayGroups(groups) {
+            kelompokScores = {
+                ide: 0,
+                visual: 0,
+                konfigurasi_ip_address: 0,
+                desain_router: 0,
+                konfigurasi_vlan: 0,
+                keamanan: 0,
+                kesesuaian_kebutuhan_kabel_dan_perangkat: 0,
+                server: 0,
+                internet_of_things: 0,
+                total: 0
+            }
+
+            const container = document.getElementById('pilih_kelompok_card');
+            container.innerHTML = ''; // Clear any previous content
+
+            groups.forEach(group => {
+                // Create the column div
+                const groupDiv = document.createElement('div');
+                groupDiv.classList.add('col-md-4');
+
+                // Create the card div
+                const cardDiv = document.createElement('div');
+                cardDiv.classList.add('card', 'cursor-pointer');
+                cardDiv.style.marginBottom = '6px';
+                cardDiv.addEventListener('click', function() {
+                    selectKelompok(group, cardDiv);
+                });
+
+                // Create the card header div (for group number)
+                const cardHeaderDiv = document.createElement('div');
+                cardHeaderDiv.classList.add('card-header');
+                cardHeaderDiv.textContent = `Kelompok ${group.group_number}`;
+
+                // Create the card body div
+                const cardBodyDiv = document.createElement('div');
+                cardBodyDiv.classList.add('card-body');
+
+                // Create the ordered list for students
+                const olElement = document.createElement('ol');
+                group.students.forEach(student => {
+                    const liElement = document.createElement('li');
+                    liElement.textContent = `${student.student_name} (${student.student_id})`;
+                    olElement.appendChild(liElement);
+                });
+
+                // Append the ordered list to the card body
+                cardBodyDiv.appendChild(olElement);
+
+                // Append the card body to the card
+                cardDiv.appendChild(cardHeaderDiv);
+                cardDiv.appendChild(cardBodyDiv);
+
+                // Append the card to the group div
+                groupDiv.appendChild(cardDiv);
+
+                // Append the group div to the container
+                container.appendChild(groupDiv);
+            });
+        }
+
+        // Function to fetch data from the PHP script
+        function fetchStudentData() {
+            // Call the PHP script using the Fetch API
+            fetch('./api/get_kelompok.php') // Replace with the actual path to your PHP script
+                .then(response => response.json()) // Parse the response as JSON
+                .then(data => {
+                    masterData = data;
+                    displayGroups(data["2024"]["C1"]);
+                })
+                .catch(error => {
+                    // If there's a problem with the fetch (e.g., network error), log it
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        // Call the function when the page is ready
+        window.onload = function() {
+            fetchStudentData();
+        };
+    </script>
+
+    <script>
+        let angkatanSelected = "2024";
+        let kelasSelected = "C1"
+        function filterByAngkatan(newVal) {
+            angkatanSelected = newVal;
+            displayGroups(masterData[angkatanSelected][kelasSelected]);
+        }
+
+        function filterByKelas(newVal) {
+            kelasSelected = newVal;
+            displayGroups(masterData[angkatanSelected][kelasSelected]);
+        }
+    </script>
+
+    <script>
+        function onSubmitPenilaianPerorangan() {
+            const penilai_id = document.getElementById('nim_penilai').value;
+            const requestVal = {
+                student_data: studentInputValues[angkatanSelected][kelasSelected][studentGroupNumberSelected],
+                penilai_id
+            }
+
+            // Call the PHP script using the Fetch API
+            fetch('./api/penilaian_perorangan.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestVal), // Send the request payload
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // If response is not OK, throw an error
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json(); // Parse the JSON from the response
+            })
+            .then(data => {
+                // Handle the response data here
+                console.log(studentInputValues[angkatanSelected][kelasSelected][studentGroupNumberSelected]);
+
+                // Update the changedStudentData[angkatanSelected][kelasSelected] state
+                changedStudentData[angkatanSelected][kelasSelected][studentGroupNumberSelected] = false;
+
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Data has been successfully submitted.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+
+                // Disable the submit button after successful submission
+                const submitButton = document.getElementById("SubmitPenilaianPerorangan");
+                submitButton.disabled = true;
+            })
+            .catch(error => {
+                // Handle any error that occurs during the fetch or response handling
+                console.error('Error during fetch operation:', error);
+
+                // Error alert using SweetAlert
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message + '. There was an error processing the submission. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+            });
+        }
+    </script>
+
+    <script>
+        // Bind function to update the values
+        function bindValues() {
+            // Bind values from input elements to the kelompokScores object
+            Object.keys(kelompokScores).forEach(key => {
+                const inputElement = document.getElementById(key);
+                if (inputElement) {
+                    inputElement.addEventListener('input', function() {
+                        kelompokScores[key] = parseFloat(inputElement.value) || 0;
+                    });
+                }
+            });
+        }
+
+        function submitPenilaianKelompok() {
+            const penilai_id = document.getElementById('nim_penilai').value;
+            const requestVal = {
+                ...kelompokScores,
+                penilai_id,
+                group_number: studentGroupNumberSelected,
+            }
+
+            // Call the PHP script using the Fetch API
+            fetch('./api/penilaian_kelompok.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestVal), // Send the request payload
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // If response is not OK, throw an error
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json(); // Parse the JSON from the response
+            })
+            .then(data => {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Data has been successfully submitted.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+
+                // Disable the submit button after successful submission
+                const submitButton = document.getElementById("submitPenilaianKelompok");
+                submitButton.disabled = true;
+            })
+            .catch(error => {
+                // Handle any error that occurs during the fetch or response handling
+                console.error('Error during fetch operation:', error);
+
+                // Error alert using SweetAlert
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message + '. There was an error processing the submission. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+            });
+        }
+
+        window.onload(() => {
+            bindValues();
+        });
+
+        const tableKelompok = document.getElementById('nilai_kelompok');
+
+        tableKelompok.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', calculateTotal);
+        });
+        
+        function calculateTotal() {
+            const submitButton = document.getElementById("submitPenilaianKelompok");
+            submitButton.disabled = false;
+
+            let total = 0;
+            const weights = {
+                ide: 0.10,
+                visual: 0.10,
+                konfigurasi_ip_address: 0.15,
+                desain_router: 0.15,
+                konfigurasi_vlan: 0.15,
+                keamanan: 0.15,
+                kebutuhan_kabel_perangkat: 0.10,
+                server: 0.05,
+                iot: 0.05
+            };
+
+            // Add up each score based on its weight
+            for (const [key, weight] of Object.entries(weights)) {
+                const score = parseInt(document.querySelector(`[name="${key}"]`).value) || 0;
+                total += score * weight;
+            }
+
+            // Display the total value in the table
+            document.getElementById('total_value').innerText = total.toFixed(2);
+        }
+
+    </script>
+
+    <script>
+        // Initialize the scores object
+        let kelompokScores = {
+            ide: 0,
+            visual: 0,
+            konfigurasi_ip_address: 0,
+            desain_router: 0,
+            konfigurasi_vlan: 0,
+            keamanan: 0,
+            kesesuaian_kebutuhan_kabel_dan_perangkat: 0,
+            server: 0,
+            internet_of_things: 0,
+            total: 0
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            bindInputs(); // Bind event listeners when the page loads
+        });
+
+        function bindInputs() {
+            const tableKelompok = document.getElementById('nilai_kelompok');
+
+            // Add event listener to each number input field
+            tableKelompok.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', updateScores);
+            });
+
+            // Initialize the total value calculation
+            calculateTotal();
+        }
+
+        // Update the scores object when input changes
+        function updateScores(event) {
+            const inputName = event.target.name;
+            const value = parseInt(event.target.value) || 0; // Ensure the value is a number or default to 0
+            kelompokScores[inputName] = value; // Update the corresponding property in the kelompokScores object
+
+            calculateTotal(); // Recalculate the total whenever a score is updated
+        }
+
+        // Calculate the total score based on the weighted values
+        function calculateTotal() {
+            const submitButton = document.getElementById("submitPenilaianKelompok");
+            submitButton.disabled = false;
+
+            let total = 0;
+            const weights = {
+                ide: 0.10,
+                visual: 0.10,
+                konfigurasi_ip_address: 0.15,
+                desain_router: 0.15,
+                konfigurasi_vlan: 0.15,
+                keamanan: 0.15,
+                kesesuaian_kebutuhan_kabel_dan_perangkat: 0.10,
+                server: 0.05,
+                internet_of_things: 0.05
+            };
+
+            // Add up each score based on its weight
+            for (const [key, weight] of Object.entries(weights)) {
+                total += kelompokScores[key] * weight; // Multiply the score by its weight
+            }
+
+            // Set the total value in the object
+            kelompokScores.total = total;
+
+            // Display the total value in the table
+            document.getElementById('total_value').innerText = total.toFixed(2);
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Scores</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>Student Scores</h2>
+    <!-- Export to CSV Button -->
+    <button id="exportBtn">Export to CSV</button>
+
+    <!-- Table to display student scores -->
+    <table id="scoreTable">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Total Perorang</th>
+                <th>Total Kelompok</th>
+                <th>Total Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Student score data will be injected here -->
+        </tbody>
+    </table>
+
+    <script>
+        let masterData;
+        // Fetch student scores from the server
+        fetch('api/result.php') // Replace with your API endpoint
+            .then(response => response.json())
+            .then(data => {
+                masterData = data;
+                // Call the function to display the student scores
+                displayScores(data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // Function to display student scores in the table
+        function displayScores(data) {
+            const tableBody = document.querySelector('#scoreTable tbody');
+            tableBody.innerHTML = ''; // Clear the table body first
+
+            // Iterate through the data and create table rows
+            data.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.student_id}</td>
+                    <td>${student.student_name}</td>
+                    <td>${student.total_perorang}</td>
+                    <td>${student.total_kelompok}</td>
+                    <td>${student.total}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to export data to CSV
+        function exportToCSV() {
+            const headers = ["Student ID", "Student Name", "Total Perorang", "Total Kelompok", "Total Score"];
+            const rows = masterData.map(student => [
+                student.student_id,
+                student.student_name,
+                student.total_perorang,
+                student.total_kelompok,
+                student.total
+            ]);
+
+            // Create CSV content
+            let csvContent = "data:text/csv;charset=utf-8,";
+
+            // Add headers to CSV
+            csvContent += headers.join(",") + "\n";
+
+            // Add rows to CSV
+            rows.forEach(row => {
+                csvContent += row.join(",") + "\n";
+            });
+
+            // Create a downloadable link
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "student_scores.csv");
+            document.body.appendChild(link);
+
+            // Trigger the download
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Add event listener for the export button
+        document.getElementById("exportBtn").addEventListener("click", exportToCSV);
+    </script>
+</body>
+</html>
