@@ -58,6 +58,7 @@
             .then(response => response.json())
             .then(data => {
                 masterData = data;
+                console.log(masterData);
                 // Call the function to display the student scores
                 displayScores(data);
             })
@@ -86,13 +87,15 @@
 
         // Function to export data to CSV
         function exportToCSV() {
-            const headers = ["Student ID", "Student Name", "Total Perorang", "Total Kelompok", "Total Score"];
+            const headers = ["Student ID", "Student Name", "Total Perorang", "Total Kelompok", "Total Score", "Kelas", "Angkatan"];
             const rows = masterData.map(student => [
                 student.student_id,
                 student.student_name,
                 student.total_perorang,
                 student.total_kelompok,
-                student.total
+                student.total,
+                student.class,
+                student.angkatan,
             ]);
 
             // Create CSV content
