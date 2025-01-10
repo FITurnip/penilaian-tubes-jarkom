@@ -18,29 +18,20 @@ if ($conn->connect_error) {
 
 // SQL query to fetch student_id, student_name from students table and total from student_scores table
 $sql = "
-    SELECT 
+SELECT 
+    g.group_number, 
     s.student_id, 
-    s.student_name,
-
-    -- Calculate total_score_avg (sum of ss.total divided by the count of student_scores for the student)
-    COALESCE(
-        (SELECT SUM(ss.total) FROM student_scores ss WHERE ss.student_id = s.student_id), 0
-    ) / 
-    NULLIF(
-        (SELECT COUNT(*) FROM student_scores ss WHERE ss.student_id = s.student_id), 0
-    ) AS total_score_avg,
-
-    -- Calculate total_point_avg (sum of sc.total_point divided by the count of student_groups for the student)
-    COALESCE(
-        (SELECT SUM(sc.total_point) FROM scoring sc 
-         JOIN student_groups sg ON sc.group_number = sg.group_number 
-         WHERE sg.student_id = s.student_id), 0
-    ) / 
-    NULLIF(
-        (SELECT COUNT(*) FROM student_groups sg WHERE sg.student_id = s.student_id), 0
-    ) AS total_point_avg
-
-FROM students s;
+    s.student_name, 
+    s.angkatan, 
+    s.class, 
+    AVG(student_scores.total) AS total_score_avg,
+    AVG(scoring.total_point) AS total_point_avg
+FROM student_groups AS g
+JOIN students AS s ON g.student_id = s.student_id
+JOIN student_scores ON s.student_id = student_scores.student_id
+JOIN scoring ON g.group_number = scoring.group_number  
+GROUP BY g.group_number, s.student_id, s.student_name, s.angkatan, s.class  
+ORDER BY s.student_id, s.angkatan, s.class, g.group_number;
 ";
 
 $result = $conn->query($sql);
@@ -56,7 +47,9 @@ if ($result->num_rows > 0) {
             'student_name' => $row['student_name'],
             'total_perorang' => $row['total_score_avg'],
             'total_kelompok' => $row['total_point_avg'],
-            'total' => ($row['total_score_avg'] + $rot['total_point_avg']) / 2
+            'total' => ($row['total_score_avg'] + $row['total_point_avg']) / 2,
+            'class' => $row['class'],
+            'angkatan' => $row['angkatan'],
         ];
     }
 
@@ -71,4 +64,3 @@ if ($result->num_rows > 0) {
 // Close the connection
 $conn->close();
 ?>
-    
