@@ -95,4 +95,3 @@ if (empty($responses)) {
 // Close the connection
 $conn->close();
 ?>
-
