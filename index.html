@@ -26,17 +26,17 @@
         <h1 class="mb-4">Penilaian</h1>
 
         <div>
-            <div class="card mb-6">
+            <div class="card mb-6 bg-danger">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-6">
-                            NIM Penilai
+                            <strong class="text-white">NIM Penilai</strong>
                         </div>
                         <div class="col-1">
                             :
                         </div>
                         <div class="col-3">
-                            <input type="text" name="nim" id="nim_penilai" class="form-control">
+                            <input type="text" name="nim" id="nim_penilai" class="form-control" placeholder="Isi bro!!!!">
                         </div>
                     </div>
                 </div>
@@ -446,7 +446,7 @@
             const student = studentInputValues[angkatanSelected][kelasSelected][groupNumber]?.[studentId];
             if (student) {
                 const presentasi = parseFloat(student.presentasi || 0) * 70 / 100;
-                const tanjaw = parseFloat(student.tanjaw || 0) * 70 / 100;
+                const tanjaw = parseFloat(student.tanjaw || 0) * 30 / 100;
                 const total = presentasi + tanjaw;
 
                 // Update the total input field for that student
@@ -712,7 +712,7 @@
 
             // Add up each score based on its weight
             for (const [key, weight] of Object.entries(weights)) {
-                const score = parseInt(document.querySelector(`[name="${key}"]`).value) || 0;
+                const score = parseInt(document.querySelector(`[name="${key}"]`)?.value ?? 0);
                 total += score * weight;
             }
 
